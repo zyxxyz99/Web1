@@ -123,7 +123,7 @@
     <!-- END: Top Navigation Ribbon/Header -->
 
     <!-- MODIFIED: Wrapper now uses the fixed-width container class -->
-    <div class="container">
+    <div class="overflow-x-auto">
         
         <h1>Courses I Teach</h1>
         

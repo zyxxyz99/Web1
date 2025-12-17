@@ -96,15 +96,15 @@
         
         /* Secondary Action Link (Enroll) */
         .secondary-link {
-            background-color: #ecf0f1; /* Light gray */
-            color: #34495e; /* Darker text */
+            background-color: #3498db; /* Light gray */
+            color: white; /* Darker text */
             padding: 8px 12px;
             border-radius: 5px;
             font-weight: bold;
             transition: background-color 0.3s;
         }
         .secondary-link:hover {
-            background-color: #bdc3c7;
+            background-color: #2980b9;
         }
     </style>
 </head>
@@ -139,11 +139,16 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="overflow-x-auto">
         
         <!-- H1 uses the red border style -->
         <h1>My Enrolled Courses</h1>
-
+		
+		<p class="text-lg font-medium text-indigo-600 mb-4">
+        Registration id:
+        <span class="font-bold"><c:out value="${sessionScope.currentUser.regId}" /></span>
+    	</p>
+    	
         <!-- Session Message Display -->
         <c:if test="${not empty sessionScope.message}">
             <div class="message">

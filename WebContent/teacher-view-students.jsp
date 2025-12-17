@@ -66,7 +66,7 @@
     </div>
 </header>
 
-<div class="container">
+<div class="overflow-x-auto">
 
     <h1>Enrolled Students</h1>
     

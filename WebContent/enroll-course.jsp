@@ -63,16 +63,15 @@
         
         /* Secondary Action Link (View Enrolled) */
         .secondary-link {
-            background-color: #ecf0f1; /* Light gray */
-            color: #34495e; /* Darker text */
+            background-color: #3498db; /* Light gray */
+            color: white; /* Darker text */
             padding: 8px 12px;
             border-radius: 5px;
             font-weight: bold;
             transition: background-color 0.3s;
-            text-decoration: none;
         }
         .secondary-link:hover {
-            background-color: #bdc3c7;
+            background-color: #2980b9;
         }
 
         /* Message Box Style */
@@ -131,10 +130,14 @@
     </header>
     <!-- END: Top Navigation Ribbon/Header -->
 
-    <div class="container">
+    <div class="overflow-x-auto">
         
         <h1>Available Courses for Enrollment</h1>
 
+		<p class="text-lg font-medium text-indigo-600 mb-4">
+        Registration id:
+        <span class="font-bold"><c:out value="${sessionScope.currentUser.regId}" /></span>
+    	</p>
         <!-- Session Message Display - Using the standard .message class -->
         <c:if test="${not empty sessionScope.message}">
             <div class="message" role="alert">
@@ -158,6 +161,7 @@
                class="secondary-link text-sm font-semibold">
                 View My Enrolled Courses
             </a>
+            
         </div>
 
         <c:choose>

@@ -170,7 +170,7 @@
     </header>
     <!-- END: Top Navigation Ribbon/Header -->
 
-    <div class="container">
+    <div class="overflow-x-auto">
         
         
 
@@ -189,6 +189,7 @@
             </div>
             <% session.removeAttribute("message"); %>
         </c:if>
+        
         
         <table>
             <thead>
@@ -249,26 +250,28 @@
                                 </c:when>
 
                                 <%-- Case 2: Target is a non-Admin (Teacher or Student) --%>
-                                <c:otherwise>
-                                    <div style="display: flex; gap: 10px; align-items: center;">
-                                        <%-- Promotion to Admin --%>
-                                        <form action="AdminServlet" method="post" onsubmit="return confirm('Are you sure you want to promote ${user.fullName} to Administrator?');" class="action-form">
-                                            <input type="hidden" name="action" value="makeAdmin" />
-                                            <input type="hidden" name="userId" value="<c:out value='${user.userId}' />" />
-                                            <button type="submit" class="admin-button action-button">Make Admin</button>
-                                        </form>
-                                        
-                                        <%-- Rule 2: Delete non-Admin account (POST request) --%>
-                                        <form action="AdminServlet" method="post" class="action-form"
-                                              onsubmit="return confirm('Are you sure you want to delete the account for ${user.fullName}? This cannot be undone.');">
-                                            <input type="hidden" name="action" value="deleteUser" />
-                                            <input type="hidden" name="userId" value="<c:out value='${user.userId}' />" />
-                                            <button type="submit" class="action-button delete-button">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </div>
-                                </c:otherwise>
+                                <%-- Case 2: Target is a non-Admin (Teacher or Student) --%>
+<c:otherwise>
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        
+        <%-- Promotion to Admin --%>
+        <form action="AdminServlet" method="post" onsubmit="return confirm('Are you sure you want to promote ${user.fullName} to Administrator?');" class="action-form">
+            <input type="hidden" name="action" value="makeAdmin" />
+            <input type="hidden" name="userId" value="<c:out value='${user.userId}' />" />
+            <button type="submit" class="admin-button action-button">Make Admin</button>
+        </form>
+        
+        <%-- Rule 2: Delete non-Admin account --%>
+        <form action="AdminServlet" method="post" class="action-form"
+              onsubmit="return confirm('Are you sure you want to delete the account for ${user.fullName}? This cannot be undone.');">
+            <input type="hidden" name="action" value="deleteUser" />
+            <input type="hidden" name="userId" value="<c:out value='${user.userId}' />" />
+            <button type="submit" class="action-button delete-button">
+                Delete
+            </button>
+        </form>
+    </div>
+</c:otherwise>
                             </c:choose>
                         </td>
                     </tr>

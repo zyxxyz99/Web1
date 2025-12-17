@@ -62,9 +62,9 @@
         /* New Styles for buttons */
         .dashboard-button {
             display: inline-block;
-            background-color: #f39c12; /* Orange for return */
+            background-color: #3498db; /* Blue */
             color: white;
-            padding: 8px 15px;
+            padding: 10px 15px;
             text-decoration: none;
             border-radius: 5px;
             font-weight: bold;
@@ -72,7 +72,7 @@
             transition: background-color 0.3s;
         }
         .dashboard-button:hover {
-            background-color: #e67e22;
+            background-color: #2980b9;
         }
 
         .add-button {
@@ -158,7 +158,7 @@
     <!-- END: Top Navigation Ribbon/Header -->
 
 
-    <div class="container">
+    <div class="overflow-x-auto">
         
         
 
