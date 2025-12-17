@@ -40,7 +40,7 @@
         <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl transition duration-300 ease-in-out hover:shadow-3xl border border-gray-100">
             
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-800">OCMS Login</h1>
+                <h1 class="text-3xl font-bold text-gray-800">OnCoMaSy Login</h1>
                 <p class="text-gray-500 mt-2">Sign in to your account</p>
             </div>
 

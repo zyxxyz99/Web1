@@ -164,7 +164,7 @@
 
         <h1>Course Management Dashboard</h1>
         
-        <p>Welcome, <c:out value="${sessionScope.currentUser.fullName}" /> (<c:out value="${sessionScope.currentUser.roleName}" />)</p>
+       <!-- <p>Welcome, <c:out value="${sessionScope.currentUser.fullName}" /> (<c:out value="${sessionScope.currentUser.roleName}" />)</p> -->
         
         <!-- NEW: Return to Dashboard button added at the top -->
         <a href="dashboard.jsp" class="dashboard-button">

@@ -69,10 +69,10 @@
 <div class="container">
 
     <h1>Enrolled Students</h1>
-
+    
     <p class="text-lg font-medium text-indigo-600 mb-4">
-        Course ID:
-        <span class="font-bold"><c:out value="${requestScope.courseId}" /></span>
+        Course Title:
+        <span class="font-bold"><c:out value="${requestScope.courseTitle}" /></span>
     </p>
 
     <a href="TeacherServlet?action=manageCourses" class="dashboard-button">&larr; Back to Course List</a>

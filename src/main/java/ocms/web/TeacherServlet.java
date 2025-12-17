@@ -100,6 +100,8 @@ public class TeacherServlet extends HttpServlet {
             throws SQLException, IOException, ServletException {
         
         int courseId;
+        String courseTitle = request.getParameter("courseTitle"); // 🌟 NEW: Get title from request
+
         try {
             courseId = Integer.parseInt(request.getParameter("courseId"));
         } catch (NumberFormatException e) {
@@ -107,12 +109,12 @@ public class TeacherServlet extends HttpServlet {
             return;
         }
         
-        // ⭐ FIX: Changed method name to match the one implemented in EnrollmentDAO.java
         List<User> listStudents = enrollmentDAO.selectEnrolledStudents(courseId);
-        request.setAttribute("listStudents", listStudents);
         
-        // Pass course ID for display
+        // Pass data to the JSP
+        request.setAttribute("listStudents", listStudents);
         request.setAttribute("courseId", courseId);
+        request.setAttribute("courseTitle", courseTitle); // 🌟 NEW: Pass title to JSP
         
         RequestDispatcher dispatcher = request.getRequestDispatcher("teacher-view-students.jsp");
         dispatcher.forward(request, response);

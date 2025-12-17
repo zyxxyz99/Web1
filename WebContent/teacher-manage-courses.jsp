@@ -165,15 +165,15 @@
                             </div>
                             
                             <!-- Button to View Students -->
-                            <a href="TeacherServlet?action=viewStudents&courseId=<c:out value='${course.courseId}' />" 
-                               class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg 
-                                      transition duration-150 ease-in-out shadow-md hover:shadow-lg flex items-center whitespace-nowrap">
-                                View Students
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.98 5.98 0 0010 16a5.979 5.979 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
+                            <a href="TeacherServlet?action=viewStudents&courseId=<c:out value='${course.courseId}' />&courseTitle=<c:out value='${course.courseTitle}' />" 
+   class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg 
+          transition duration-150 ease-in-out shadow-md hover:shadow-lg flex items-center whitespace-nowrap">
+    View Students
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.98 5.98 0 0010 16a5.979 5.979 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+    </svg>
+</a>
                         </div>
                     </c:forEach>
                 </div>
