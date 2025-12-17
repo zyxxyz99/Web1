@@ -80,6 +80,10 @@ public class UserDAO {
     // NEW SQL: Count users by role ID
     private static final String COUNT_USERS_BY_ROLE_SQL = "SELECT COUNT(*) FROM users WHERE role_id = ?";
 
+    private static final String DELETE_ENROLLMENTS_BY_TEACHER_COURSES_SQL =
+            "DELETE FROM enrollments WHERE course_id IN (SELECT course_id FROM courses WHERE teacher_id = ?)";
+    
+    
 
     // Helper method to map a ResultSet row to a User object.
     private User mapResultSetToUser(ResultSet rs) throws SQLException {
@@ -272,44 +276,35 @@ public class UserDAO {
         Connection connection = null;
         boolean rowUpdated = false;
 
-        final int ADMIN_ROLE = 1;
         final int TEACHER_ROLE = 2;
         final int STUDENT_ROLE = 3;
 
         try {
             connection = DBUtil.getConnection();
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); // Start Transaction
 
             int currentRoleId = getCurrentRoleId(connection, userId);
             
-            if (newRoleId == ADMIN_ROLE && currentRoleId != ADMIN_ROLE) {
+            // Only perform cleanup if the role is actually changing
+            if (currentRoleId != newRoleId) {
                 
+                // IF PREVIOUSLY A STUDENT: Clear their personal course enrollments
                 if (currentRoleId == STUDENT_ROLE) {
                     try (PreparedStatement deleteEnrollments = connection.prepareStatement(DELETE_ENROLLMENTS_BY_STUDENT_SQL)) {
                         deleteEnrollments.setInt(1, userId);
                         deleteEnrollments.executeUpdate();
                     }
-                    
-                } else if (currentRoleId == TEACHER_ROLE) {
-
-                    List<Integer> courseIdsToDelete = new ArrayList<>();
-                    try (PreparedStatement selectCourses = connection.prepareStatement(SELECT_COURSES_BY_TEACHER_SQL)) {
-                        selectCourses.setInt(1, userId);
-                        try (ResultSet rs = selectCourses.executeQuery()) {
-                            while (rs.next()) {
-                                courseIdsToDelete.add(rs.getInt("course_id"));
-                            }
-                        }
+                } 
+                
+                // IF PREVIOUSLY A TEACHER: Delete their courses and those courses' enrollments
+                else if (currentRoleId == TEACHER_ROLE) {
+                    // Step A: Delete enrollments for all courses taught by this teacher
+                    try (PreparedStatement deleteEnrollments = connection.prepareStatement(DELETE_ENROLLMENTS_BY_TEACHER_COURSES_SQL)) {
+                        deleteEnrollments.setInt(1, userId);
+                        deleteEnrollments.executeUpdate();
                     }
                     
-                    try (PreparedStatement deleteEnrollments = connection.prepareStatement(DELETE_ENROLLMENTS_BY_COURSE_SQL)) {
-                        for (int courseId : courseIdsToDelete) {
-                            deleteEnrollments.setInt(1, courseId);
-                            deleteEnrollments.addBatch();
-                        }
-                        deleteEnrollments.executeBatch();
-                    }
-                    
+                    // Step B: Delete the courses themselves
                     try (PreparedStatement deleteCourses = connection.prepareStatement(DELETE_COURSES_BY_TEACHER_SQL)) {
                         deleteCourses.setInt(1, userId);
                         deleteCourses.executeUpdate();
@@ -317,13 +312,14 @@ public class UserDAO {
                 }
             }
 
+            // Finally, update the user's role in the users table
             try (PreparedStatement statement = connection.prepareStatement(UPDATE_USER_ROLE_SQL)) {
                 statement.setInt(1, newRoleId);
                 statement.setInt(2, userId);
                 rowUpdated = statement.executeUpdate() > 0;
             }
 
-            connection.commit();
+            connection.commit(); // Save all changes
         } catch (SQLException e) {
             if (connection != null) {
                 try { connection.rollback(); } catch (SQLException ignored) {}
@@ -371,28 +367,38 @@ public class UserDAO {
         
         try {
             connection = DBUtil.getConnection();
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); // Start Transaction
 
-            try (PreparedStatement deleteEnrollments = connection.prepareStatement(DELETE_ENROLLMENTS_BY_STUDENT_SQL)) {
-                deleteEnrollments.setInt(1, userId);
-                deleteEnrollments.executeUpdate();
+            // STEP 1: If user is a student, delete their personal enrollments
+            try (PreparedStatement deleteStudentEnrollments = connection.prepareStatement(DELETE_ENROLLMENTS_BY_STUDENT_SQL)) {
+                deleteStudentEnrollments.setInt(1, userId);
+                deleteStudentEnrollments.executeUpdate();
             }
 
-            try (PreparedStatement updateCourses = connection.prepareStatement(UPDATE_COURSES_TEACHER_SQL)) {
-                updateCourses.setInt(1, userId);
-                updateCourses.executeUpdate();
+            // STEP 2: If user is a teacher, delete enrollments for the courses they teach
+            // (Uses a subquery to find all courses belonging to this teacher_id)
+            try (PreparedStatement deleteCourseEnrollments = connection.prepareStatement(DELETE_ENROLLMENTS_BY_TEACHER_COURSES_SQL)) {
+                deleteCourseEnrollments.setInt(1, userId);
+                deleteCourseEnrollments.executeUpdate();
             }
 
-            try (PreparedStatement deleteUser = connection.prepareStatement(DELETE_USER_SQL)) {
-                deleteUser.setInt(1, userId);
-                userDeleted = deleteUser.executeUpdate() > 0;
+            // STEP 3: Delete the courses taught by this teacher
+            try (PreparedStatement deleteTeacherCourses = connection.prepareStatement(DELETE_COURSES_BY_TEACHER_SQL)) {
+                deleteTeacherCourses.setInt(1, userId);
+                deleteTeacherCourses.executeUpdate();
+            }
+
+            // STEP 4: Finally, delete the user record itself
+            try (PreparedStatement deleteUserStmt = connection.prepareStatement(DELETE_USER_SQL)) {
+                deleteUserStmt.setInt(1, userId);
+                userDeleted = deleteUserStmt.executeUpdate() > 0;
             }
             
-            connection.commit();
+            connection.commit(); // Commit all changes
             
         } catch (SQLException e) {
             if (connection != null) {
-                try { connection.rollback(); } catch (SQLException ignored) {}
+                try { connection.rollback(); } catch (SQLException ignored) {} // Undo on error
             }
             throw e; 
         } finally {
